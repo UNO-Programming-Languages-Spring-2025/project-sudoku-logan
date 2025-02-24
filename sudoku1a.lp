@@ -4,18 +4,19 @@
 % For subgrid of size n, subgrids can be identified by labels 1..n*n
 % A cell (x,y) can be mapped to the subgrid labeled 1+(((x-1)/n)*n+(y-1)/n)
 
-% Define domain
+% Define a 4x4 grid
 num(1..4).
-row(1..4).
-col(1..4).
 
-% Generate one number per cell
-{ sudoku(X,Y,N) : num(N) } = 1 :- row(X), col(Y).
+% Ensure that pre-filled numbers remain unchanged
+sudoku(X, Y, N) :- initial(X, Y, N).
 
-% Row constraint: each number appears exactly once per row
-:- row(X), num(N), sudoku(X,Y1,N), sudoku(X,Y2,N), Y1 != Y2.
+% Every cell (X,Y) contains exactly one number
+{ sudoku(X, Y, N) : num(N) } = 1 :- num(X), num(Y).
 
-% Column constraint: each number appears exactly once per column
-:- col(Y), num(N), sudoku(X1,Y,N), sudoku(X2,Y,N), X1 != X2.
+% Each row contains distinct numbers
+:- sudoku(X, Y1, N), sudoku(X, Y2, N), Y1 != Y2.
+
+% Each column contains distinct numbers
+:- sudoku(X1, Y, N), sudoku(X2, Y, N), X1 != X2.
 
 #show sudoku/3.
